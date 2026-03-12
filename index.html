@@ -1,214 +1,291 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Urban & Suburban Elections Game</title>
+  <title>Urban & Suburban – Civic Elections Game</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
   <link href="https://fonts.googleapis.com/css?family=Quicksand:600,700|Montserrat:400,600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --urban: #3367d6;
-      --suburban: #43a047;
-      --bg: #191b24;
-      --accent: #ffd600;
-      --danger: #fa5252;
+      --urban: #4D90FA;
+      --suburban: #48D39E;
+      --bg: #17192b;
+      --accent: #F8FF90;
+      --danger: #FF4E55;
+      --voteprog: #555;
+      --pieyes: #54A0FF;
+      --pieno: #20C997;
+      --shadow2: 0 10px 30px #0017, 0 2px 5px #0008;
+      --radgrad: radial-gradient(circle at 60% 30%, #4448 10%, #111e 99%);
     }
-
     html, body {
+      padding: 0; margin: 0;
       background: var(--bg);
-      color: #fff;
-      margin: 0;
-      padding: 0;
-      font-family: 'Quicksand', 'Montserrat', sans-serif;
+      color: #f8f8f8;
+      font-family: 'Quicksand','Montserrat',sans-serif;
       min-height: 100vh;
+      letter-spacing: .03em;
+      background-image: var(--radgrad);
+      background-size: cover;
       overflow-x: hidden;
     }
     .container {
-      max-width: 500px;
-      margin: 60px auto;
-      background: #23253b;
+      background: #202244e6;
+      max-width: 490px;
+      margin: 55px auto;
+      padding: 36px 22px 32px 22px;
       border-radius: 22px;
-      box-shadow: 0 8px 40px #0008;
-      padding: 34px 30px 30px 30px;
+      box-shadow: var(--shadow2);
       position: relative;
       text-align: center;
+      animation: contfade .7s cubic-bezier(.4,2,.25,1) 1;
     }
+    @keyframes contfade {from{opacity:0;transform:translateY(60px);}  to{opacity:1;transform:none;}}
+
     h1 {
-      font-family: 'Quicksand', sans-serif;
-      font-size: 2.3rem;
+      font-size: 2.2rem;
+      line-height: 1.2;
       color: var(--accent);
-      letter-spacing: 2px;
-      margin-bottom: 8px;
+      margin-bottom: 7px;
+      text-shadow: 0 2px 20px #5556;
+      letter-spacing: .06em;
     }
-    h2 { color: #ccc }
+    h2 { color: #eed; margin: 18px 0 2px 0; }
+    .desc {
+      color: #b5cbee;
+      margin-bottom: 22px;
+      margin-top: 2px;
+      font-size: 1.13rem;
+      letter-spacing: .02em;
+      line-height: 1.6;
+    }
     .roles {
-      display: flex;
-      justify-content: space-between;
-      margin: 20px 0 30px 0;
+      display: flex; gap:19px;
+      justify-content: center; margin: 18px auto 32px auto;
     }
-    .role { flex: 1; padding: 12px; border-radius: 13px; margin: 0 6px; background: #1e2033; font-weight: 700; }
-    .role.urban { border: 2px solid var(--urban); color: var(--urban); }
-    .role.suburban { border: 2px solid var(--suburban); color: var(--suburban); }
+    .role {
+      flex: 1; padding: 13px 6px 14px 6px;
+      border-radius: 19px;
+      background: #151829f8;
+      font-weight: 800;
+      font-size: 1.07rem;
+      cursor: pointer;
+      border: 2.5px solid #2b334e;
+      opacity: .92;
+      box-shadow: 0 3px 16px #1116;
+      user-select:none;
+      transition: 
+        border .2s,
+        transform .15s,
+        box-shadow .2s;
+    }
+    .role.urban {
+      border-color: var(--urban); color: var(--urban);
+      box-shadow: 0 2px 12px #4d90fa38;
+    }
+    .role.suburban {
+      border-color: var(--suburban); color: var(--suburban);
+      box-shadow: 0 2px 13px #20c97a35;
+    }
     .hidden { display: none !important; }
 
-    /* Glücksrad */
+    /* Wheel – enhanced! */
+    #wheelWrap { margin: 29px auto 10px; }
     #wheelCanvas {
-      margin: 25px auto 0 auto;
-      display: block;
+      display: block; margin: 0 auto;
       border-radius: 50%;
-      border: 7px solid #333;
+      border: 9px solid #31334c;
+      box-shadow: 0 0 32px 8px #22ef5f08, 0 3px 40px #000b;
+      background: #16192a;
     }
-    #spinBtn {
-      margin-top: 18px;
-      background: linear-gradient(90deg,var(--accent),#f1c40f 70%);
-      border: none;
-      color: #222;
-      font-weight: bold;
-      padding: 13px 38px;
-      font-size: 1.2rem;
-      border-radius: 28px;
-      cursor: pointer;
-      box-shadow: 0 4px 16px #0004;
-      letter-spacing: 1px;
-      transition: background .2s;
+    .spinner-glow {
+      animation: glowspin 0.85s cubic-bezier(.5,3,.22,.96) infinite alternate;
+      box-shadow: 0 0 34px 6px var(--accent),0 0 40px 4px #5390f746;
     }
-    #spinBtn:active { background: #fff200; }
+    @keyframes glowspin {to{box-shadow:0 0 80px 14px var(--accent),0 0 50px 15px #48D39E44;}}
 
-    /* Countdown Timer */
-    #timer {
-      font-size: 2.4rem;
-      margin: 20px 0 8px 0;
-      font-family: monospace;
+    #spinBtn {
+      margin:20px auto 0 auto;
+      padding: 15px 45px;
+      font-size: 1.23rem;
+      font-family: inherit;
+      background: linear-gradient(87deg,#f8ff90,#f8e784 70%);
+      color: #184297;
+      font-weight: bold;
+      border: none;
+      border-radius: 45px;
+      cursor: pointer;
+      letter-spacing: .05em;
+      box-shadow: 0 4px 15px #0005;
+      outline: 0;
+      transition: background .14s, color .12s, transform .11s;
+    }
+    #spinBtn:active { background: #fffebd; color: #19687b; transform: scale(.98); }
+
+    /* Timer Progress ring */
+    #timerSection {margin:17px 0 5px 0;}
+    .progress-ring {
+      margin: 0 auto 8px auto; display: block;
+    }
+    #timerVal {
+      position: absolute;
+      left: 50%; top: 49.5%; transform: translate(-50%,-51%);
+      font-size: 2.1rem;
       color: var(--danger);
-      letter-spacing: 6px;
-      text-shadow: 0 2px 10px #f22a;
-      opacity: .92;
-      animation: pulse 1s infinite alternate;
+      background: #17191f99;
+      font-family:monospace;
+      border-radius: 7px;
+      min-width: 96px;
+      letter-spacing: 2px;
+      text-shadow: 0 2px 14px #e00b,0 0 2px #fff;
+      pointer-events:none;
     }
-    @keyframes pulse { to { color: #fff; } }
-    .role-card {
-      background: #252851;
-      border-radius: 17px;
-      padding: 24px;
-      color: #fff;
-      margin: 17px auto 10px auto;
-      max-width: 96%;
-      box-shadow: 0 0 14px #0006;
-      transition: .6s cubic-bezier(.41,1.41,.37,.99);
+    #timerMsg {
+      color: #ccd9e5;
+      font-size: 1.09rem;
+      margin: 0 0 10px 0;
+      min-height: 22px;
+      letter-spacing:.02em;
     }
-    .role-title { font-size: 1.25rem; margin-bottom: 11px; color: var(--accent);}
-    .role-desc { color: #ddd; font-size: 1.05rem;}
-    #nextBtn {
-      margin-top: 22px;
+    #skipBtn {
+      margin-top: 10px;
       background: var(--urban);
       color: #fff;
-      padding: 13px 38px;
-      border-radius: 28px;
-      border: none;
-      font-size: 1.15rem;
-      font-weight: bold;
-      letter-spacing: 1.2px;
+      padding: 10px 31px;
+      border-radius: 22px;
+      border: none; font-size: 1.1rem;
+      font-weight: bold; letter-spacing: 1.2px;
       transition: background .2s;
       cursor: pointer;
       box-shadow: 0 3px 12px #0004;
+      outline:0;
+      margin-bottom:7px;
     }
-    #nextBtn:active { background: #49a0fa; }
+    #skipBtn:active { background: #53a9fe !important; }
 
-    /* Voting UI */
+    .role-card {
+      background: #232458ec;
+      margin: 19px auto 5px auto;
+      border-radius: 17px;
+      box-shadow: 0 0 12px #0006;
+      transition: .6s cubic-bezier(.41,1.41,.37,.99);
+      padding: 22px 18px 19px 18px;
+      max-width: 99%;
+    }
+    .role-title { 
+      color: var(--accent);
+      font-weight: 900;
+      font-size: 1.26rem; margin-bottom: 10px; }
+    .role-desc { color: #eee; font-size: 1.08rem; line-height:1.72;}
+
+    /* Voting UI - enhanced */
     .voting {
-      margin-top: 18px;
-      background: #262947;
-      border-radius: 16px;
-      padding: 21px 7px 13px 7px;
-      box-shadow:  0 0 8px #2227 inset;
+      background: #232840ed;
+      border-radius: 18px;
+      padding: 22px 12px 17px 12px;
+      margin-bottom: 8px;
+      margin-top: 26px;
+      box-shadow: 0 0 18px #120b38 inset;
+      min-height: 125px;
     }
     .vote-question {
       font-size: 1.18rem;
-      font-weight: 600;
+      font-weight: 700;
       margin-bottom: 18px;
       color: var(--accent);
+      text-shadow: 0 2px 14px #ffd80024;
     }
     .vote-options {
       display: flex;
       justify-content: center;
-      gap: 18px;
-      margin-bottom: 14px;
+      gap: 16px;
+      margin-bottom: 13px;
     }
     .vote-btn {
-      font-size: 1.1rem;
+      font-size: 1.09rem;
       font-family: inherit;
       background: var(--accent);
-      color: #333;
+      color: #334;
       border: none;
-      padding: 10px 25px;
-      border-radius: 21px;
+      padding: 10px 23px;
+      border-radius: 22px;
       cursor: pointer;
-      box-shadow: 0 2px 10px #0002;
+      box-shadow: 0 3px 18px #0002;
       font-weight: bold;
-      transition: background .2s;
+      letter-spacing: .04em;
+      transition: background .11s;
     }
-    .vote-btn:active { background: #fff078; }
+    .vote-btn:active { background: #fff086; }
     .vote-progress {
-      width: 100%;
-      height: 15px;
-      border-radius: 10px;
-      background: #36395c;
-      margin-top: 16px;
+      width: 99%;
+      height: 15px; border-radius: 10px;
+      background: #344164;
+      margin: 14px auto 5px auto;
       overflow: hidden;
       position: relative;
+      box-shadow: 0 3px 18px #123b inset;
     }
     .vote-bar {
-      height: 100%;
-      position: absolute;
-      left: 0; top: 0;
+      height: 100%; position: absolute; left:0; top:0;
       background: linear-gradient(90deg,var(--urban),var(--suburban));
       width: 0;
-      transition: width 1.2s cubic-bezier(.4,1.15,.35,1);
+      border-radius: 11px;
+      transition: width 1.2s cubic-bezier(.42,1.25,.32,1);
     }
-    #votePieWrap { margin: 24px auto 0 auto; max-width: 300px; }
+    #votePieWrap { margin: 26px auto 0 auto; max-width: 340px; }
     #votePie {
-      width: 100%; max-width: 290px;
+      width: 100%; max-width: 330px;
       border-radius: 50%;
-      display: block;
-      margin: 0 auto 11px auto;
-      background: #222;
-      border: 7px solid #444;
-      box-shadow: 0 6px 32px #0007;
-      min-height: 210px;
+      border: 8px solid #38466e;
+      box-shadow: 0 6px 32px #000a,0 2px 9px #4d90fa42;
+      min-height: 220px;
+      background: #12161fdd;
+      display:block;
+      margin: 0 auto 6px auto;
     }
-    .pie-label { font-size: 1rem; margin: 2px 0; color: #eee;}
+    .pie-label { font-size: 1.01rem; margin: 1px 0 0 0; color: #eef;}
+    .pie-expl {color:#f7f7aa;font-size:1.08em;line-height:1.17}
 
-    @media (max-width: 600px) {
-      .container { padding: 17px 4vw 20px 4vw; }
-      h1 { font-size: 1.45rem; }
-      .roles { flex-direction: column; gap: 6px;}
-      .role { margin: 0 0 7px 0; }
+    @media (max-width:700px){ .container{max-width:99vw;} }
+    @media (max-width:540px){
+      .container { padding:9px 1vw 16px 1vw;}
+      h1{font-size: 1.3rem;}
+      .roles{gap:10px;}
+      .role{font-size:.98em;}
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Urban & Suburban<br>Elections Game</h1>
+    <h1>Civic Elections Game</h1>
+    <div class="desc">Welcome to Urban & Suburban! Who truly sways an election? Spin the wheel, discover your life, and fight for your vision!</div>
     <div class="roles">
-      <div class="role urban">Urban</div>
-      <div class="role suburban">Suburban</div>
+      <div class="role urban">Urban Citizen</div>
+      <div class="role suburban">Suburban Citizen</div>
     </div>
-
-    <!-- Glücksrad / Rollenverteilung -->
-    <canvas id="wheelCanvas" width="300" height="300"></canvas>
-    <button id="spinBtn">Glücksrad starten</button>
-
-    <!-- Countdown & Rolle -->
+    <!-- Wheel -->
+    <div id="wheelWrap">
+      <canvas id="wheelCanvas" width="340" height="340"></canvas>
+      <button id="spinBtn">Spin Wheel</button>
+    </div>
+    <!-- Timer & Role -->
     <div id="roleScreen" class="hidden">
-      <div id="timer"></div>
+      <div id="timerSection" style="position:relative;width:145px;height:145px;margin:0 auto;">
+        <svg class="progress-ring" width="145" height="145">
+          <circle stroke="#28496c" stroke-width="12" fill="transparent" r="60" cx="72.5" cy="72.5"/>
+          <circle id="timerRing" stroke="#f5df37" stroke-width="12" fill="transparent" r="60" cx="72.5" cy="72.5" stroke-linecap="round" />
+        </svg>
+        <span id="timerVal"></span>
+      </div>
+      <div id="timerMsg"></div>
       <div class="role-card">
         <div class="role-title" id="roleTitle"></div>
         <div class="role-desc" id="roleDesc"></div>
       </div>
-      <button id="nextBtn">Zur Abstimmung!</button>
+      <button id="skipBtn">Ready to Vote!</button>
     </div>
-
-    <!-- Votingphase -->
+    <!-- Voting -->
     <div id="voteScreen" class="hidden">
       <div class="voting">
         <div id="question"></div>
@@ -216,259 +293,269 @@
         <div class="vote-progress"><div class="vote-bar" id="voteBar"></div></div>
       </div>
       <div id="votePieWrap" class="hidden">
-        <canvas id="votePie" width="290" height="220"></canvas>
+        <canvas id="votePie" width="330" height="220"></canvas>
         <div class="pie-label" id="pieLabel"></div>
+        <div class="pie-expl" id="pieExpl"></div>
       </div>
     </div>
   </div>
 
-  <script>
-    // --- Rolle-Beschreibungen
-    const roles = [
-      {
-        name: "Urban",
-        desc: "Als Urban wohnst du in der Innenstadt. Du bist progressiv, hast viele Mitmenschen um dich, bist politisch aktiv und genießt die Vielfalt deiner Nachbarschaft."
-      },
-      {
-        name: "Suburban",
-        desc: "Als Suburban bist du im grünen Umland zuhause. Für dich zählen Nachbarschaft, Nähe zur Natur, ein eigenes Haus, und du bist meist zurückhaltender in Politik oder Wandel."
-      }
-    ];
+<script>
+  // --- Roles (enhanced+ENG) ---
+  const roles = [
+    {
+      name: "Urban Citizen",
+      desc: "You thrive in the heart of the city: fast-paced, diverse, forward-thinking. You side with progress, value community movements, and want to make the city bloom and buzz."
+    },
+    {
+      name: "Suburban Citizen",
+      desc: "Life is greener on your side: you enjoy your own space, backyards and barbecues, and value stability. You vote for what preserves comfort and family routines."
+    }
+  ];
 
-    // --- Glücksrad
-    const wheelColors = ["#3367d6", "#43a047"];
-    const wheelLabels = ["Urban", "Suburban"];
+  // --- Wheel
+  const wheelColors = ["#54A0FF", "#20C997"];
+  const wheelLabels = ["Urban", "Suburban"];
+  const wheel = document.getElementById("wheelCanvas");
+  const ctx = wheel.getContext("2d");
+  let wheelAngle=0, spinning=false, assignedRole=null;
 
-    const wheel = document.getElementById("wheelCanvas");
-    const ctx = wheel.getContext("2d");
-    let wheelAngle = 0;
-    let spinning = false, assignedRole = null;
-
-    function drawWheel(angle=0) {
-      ctx.clearRect(0, 0, wheel.width, wheel.height);
-      const r = wheel.width / 2;
-      for(let i=0; i<2;i++){
-        ctx.beginPath();
-        ctx.moveTo(r,r);
-        ctx.arc(r,r,r-5,angle+i*Math.PI,angle+(i+1)*Math.PI);
-        ctx.closePath();
-        ctx.fillStyle = wheelColors[i];
-        ctx.fill();
-        ctx.save();
-        ctx.translate(r,r);
-        ctx.rotate(angle+i*Math.PI+Math.PI/2);
-        ctx.textAlign = "center";
-        ctx.fillStyle="#fff";
-        ctx.font="bold 28px Quicksand,sans-serif";
-        ctx.fillText(wheelLabels[i], 0, -90);
-        ctx.restore();
-      }
-      // Pfeil
+  function drawWheel(angle=0) {
+    ctx.clearRect(0, 0, wheel.width, wheel.height);
+    const r = wheel.width/2;
+    for(let i=0;i<2;i++){
       ctx.save();
+      // arc
       ctx.beginPath();
-      ctx.translate(r,15);
-      ctx.moveTo(0,0);
-      ctx.lineTo(-16,-22); ctx.lineTo(0,-36);
-      ctx.lineTo(16,-22); ctx.closePath();
-      ctx.fillStyle = "#ffd600";
-      ctx.shadowColor="#ffd600";
-      ctx.shadowBlur=9;
-      ctx.fill();
+      ctx.moveTo(r,r);
+      ctx.arc(r,r,r-10,angle+i*Math.PI,angle+(i+1)*Math.PI);
+      ctx.closePath();
+      ctx.fillStyle = wheelColors[i];
+      ctx.shadowColor = wheelColors[i]+'cc';
+      ctx.shadowBlur = 19;
+      ctx.globalAlpha = 0.88;
+      ctx.fill(); ctx.globalAlpha = 1;
+      // text
+      ctx.translate(r,r);
+      ctx.rotate(angle+i*Math.PI+Math.PI/2);
+      ctx.textAlign = "center";
+      ctx.font="700 34px Quicksand,sans-serif";
+      ctx.fillStyle = "#fff";
+      ctx.shadowBlur = 0;
+      ctx.fillText(wheelLabels[i], 0, -100);
       ctx.restore();
     }
+    // Arrow
+    ctx.save();
+    ctx.beginPath();
+    ctx.translate(r,16);
+    ctx.moveTo(0,0);
+    ctx.lineTo(-19,-30); ctx.lineTo(0,-45);
+    ctx.lineTo(19,-30); ctx.closePath();
+    ctx.fillStyle = "#f7ff7d";
+    ctx.shadowColor = "#fff98f"; ctx.shadowBlur=10;
+    ctx.fill(); ctx.restore();
+  }
+  drawWheel();
 
-    drawWheel(wheelAngle);
-
-    document.getElementById("spinBtn").onclick = function(){
-      if (spinning) return;
-      spinning = true;
-      let spinTime = 0;
-      let totalSpin = 3000 + Math.random()*1400;
-      let lastAngle=wheelAngle;
-      function animate(now=performance.now(),startNow=now){
-        spinTime = now-startNow;
-        let progress = spinTime/totalSpin;
-        if(progress > 1) progress=1;
-        let speed = 1-(progress);
-        let delta = 0.18 + 5*speed*speed;
-        wheelAngle += delta * (progress < 1 ? 1 : 0.2);
-        wheelAngle %= Math.PI*2;
-        drawWheel(wheelAngle);
-        if(progress<1){
-          requestAnimationFrame((n)=>animate(n,startNow));
-        } else {
-          spinning=false;
-          // Bestimme Rolle anhand des Winkels:
-          let val = ((wheelAngle% (Math.PI*2))/Math.PI);
-          assignedRole = (val < 1) ? 0 : 1;  // 0=Urban, 1=Suburban
-          setTimeout(showRoleScreen, 850);
-        }
+  document.getElementById("spinBtn").onclick = function(){
+    if(spinning)return;
+    spinning=true;
+    wheel.classList.add('spinner-glow');
+    let totalSpin = 2700+Math.random()*1900;
+    function animate(now=performance.now(),startNow=now){
+      let spinTime=now-startNow,progress=spinTime/totalSpin;
+      if(progress>1)progress=1;
+      let speed = 1-(progress);
+      let delta = 0.7 + 6.3*speed*speed;
+      wheelAngle += delta*(progress<1?1:0.18);
+      wheelAngle %= Math.PI*2;
+      drawWheel(wheelAngle);
+      if(progress<1)
+        requestAnimationFrame(n=>animate(n,startNow));
+      else{
+        spinning=false;
+        wheel.classList.remove('spinner-glow');
+        let val=((wheelAngle%(Math.PI*2))/Math.PI);
+        assignedRole = (val<1)?0:1; //0=Urban,1=Suburban
+        setTimeout(showRoleScreen,900);
       }
-      animate();
-      this.disabled = true;
-      this.textContent = "Glücksrad dreht…";
-    };
-
-    // Rolle anzeigen + Timer
-    function showRoleScreen(){
-      document.getElementById("spinBtn").classList.add("hidden");
-      wheel.classList.add("hidden");
-      document.getElementById("roleScreen").classList.remove("hidden");
-      let role = roles[assignedRole];
-      document.getElementById("roleTitle").textContent = "Deine Rolle: "+role.name;
-      document.getElementById("roleDesc").textContent = role.desc;
-      startTimer(240);
     }
+    animate();
+    this.disabled=true; this.textContent="Spinning…";
+  };
 
-    // --- 4-Minuten-Countdown
-    let countdownInt, timeLeft=240;
-    function startTimer(secs){
-      timeLeft=secs;
-      updateTimer();
-      countdownInt = setInterval(()=>{
-        timeLeft--;
-        updateTimer();
-        if(timeLeft <= 0) {
-          clearInterval(countdownInt);
-          document.getElementById("nextBtn").disabled=false;
-          document.getElementById("timer").textContent="⏳ Zeit abgelaufen!";
-        }
-      },1000);
-    }
-    function updateTimer(){
-      let min = Math.floor(timeLeft/60).toString();
-      let sec = (timeLeft%60).toString().padStart(2,"0");
-      document.getElementById("timer").textContent = `⏰ ${min}:${sec} `;
-      document.getElementById("nextBtn").disabled=true;
-      if(timeLeft<=0) document.getElementById("nextBtn").disabled=false;
-    }
+  // --- Role and Timer (with ring) ---
+  function showRoleScreen(){
+    document.getElementById("spinBtn").classList.add("hidden");
+    wheel.parentElement.classList.add("hidden");
+    document.getElementById("roleScreen").classList.remove("hidden");
+    let role=roles[assignedRole];
+    document.getElementById("roleTitle").textContent="Your role: "+role.name;
+    document.getElementById("roleDesc").textContent=role.desc;
+    startTimer(60*4);
+  }
 
-    document.getElementById("nextBtn").onclick = function(){
-      clearInterval(countdownInt);
-      document.getElementById("roleScreen").classList.add("hidden");
-      startVoting();
-    };
-
-    // --- VOTINGS
-    const votingQuestions = [
-      {
-        q: "Stimme ab: Sollen in der Stadt mehr Parks gebaut werden?",
-        options: ["Ja", "Nein"]
-      },
-      {
-        q: "Bist du für einen Ausbau des Nahverkehrs?",
-        options: ["Ja", "Nein"]
-      },
-      {
-        q: "Soll Suburbia neue Einkaufsmöglichkeiten bekommen?",
-        options: ["Ja", "Nein"]
+  // Circular timer
+  let countdownInt, timeLeft=240, totalSec=240;
+  function startTimer(secs){
+    timeLeft=secs; totalSec=secs;
+    drawTimerRing(1);
+    updateTimer();
+    document.getElementById("timerVal").style.color="";
+    document.getElementById("timerVal").textContent="";
+    document.getElementById("timerMsg").textContent = "Get ready! You have 4 minutes to read and embrace your role…";
+    countdownInt=setInterval(()=>{
+      --timeLeft; updateTimer();
+      if(timeLeft<=0){
+        clearInterval(countdownInt);
+        drawTimerRing(0);
+        document.getElementById("timerVal").textContent="🚀";
+        document.getElementById("timerMsg").textContent = "Time's up!";
+        document.getElementById("skipBtn").disabled=false;
+        document.getElementById("skipBtn").style.background= "#54A0FA";
       }
-    ];
-    let votingRound = 0;
-    let fakeVotes = [];
-    function startVoting() {
-      document.getElementById("voteScreen").classList.remove("hidden");
-      showVotingQuestion();
-    }
-    function showVotingQuestion() {
-      // Voting-UI vorbereiten
-      let q = votingQuestions[votingRound];
-      document.getElementById("question").innerHTML = `<span class='vote-question'>${q.q}</span>`;
-      let optHtml = '', optLen=q.options.length;
-      for(let i=0;i<optLen;i++){
-        optHtml += `<button class="vote-btn" onclick="castVote(${i})">${q.options[i]}</button>`;
-      }
-      document.getElementById("voteOptions").innerHTML = optHtml;
-      document.getElementById("voteBar").style.width="0";
-      document.getElementById("votePieWrap").classList.add("hidden");
-    }
+    },1000);
+    updateTimer();
+    document.getElementById("skipBtn").disabled=true;
+    document.getElementById("skipBtn").style.background="#bbb";
+  }
+  function drawTimerRing(p){ //p:0..1
+    let c=document.getElementById("timerRing");
+    let rad=60, circ=2*Math.PI*rad;
+    c.style.strokeDasharray = circ;
+    c.style.strokeDashoffset = (1-p)*circ;
+  }
+  function updateTimer(){
+    if(timeLeft<0)return;
+    drawTimerRing(timeLeft/totalSec);
+    let min=Math.floor(timeLeft/60), sec=(timeLeft%60).toString().padStart(2,"0");
+    document.getElementById("timerVal").textContent = `⏰ ${min}:${sec}`;
+    if(timeLeft<=6) document.getElementById("timerVal").style.color = "var(--danger)";
+    if(timeLeft>0) document.getElementById("skipBtn").disabled=true,document.getElementById("skipBtn").style.background="#bbb";
+  }
+  document.getElementById("skipBtn").onclick=function(){
+    clearInterval(countdownInt);
+    document.getElementById("roleScreen").classList.add("hidden");
+    startVoting();
+  }
 
-    // --- Fake-Vote-Animation (Urban & Suburban simuliert, Suburban entscheidet!!)
-    window.castVote = function(opt){
-      document.getElementById("voteOptions").innerHTML="<div style='font-size:1.17rem;color:#ccc'>Vielen Dank für deine Stimme!</div>";
-      // Simuliere Daten "fliegen ein"
-      let total=0, urban=0, suburban=0, interval=null, maxVotes=49+Math.floor(Math.random()*11);
-      let rollName = roles[assignedRole].name;
-      // Urban-Leute stimmen progressiver, Suburb konservativer
-      for(let i=0;i<maxVotes;i++){
-        if (Math.random() < 0.54) {
-          // Doppelt soviele Suburbans (sie sind entscheidend!)
-          fakeVotes.push({type: "Suburban", vote: (Math.random()<0.5 ? 0 : 1)});
-        } else {
-          fakeVotes.push({type: "Urban", vote: (Math.random()<0.75 ? 0 : 1)});
-        }
-      }
-      // User-Vote zählt als letzter urban/suburban
-      fakeVotes.push({type: rollName, vote: opt});
-      let animIdx=0, urbYes=0, urbNo=0, subYes=0, subNo=0;
-      interval = setInterval(()=> {
-        if(animIdx>=fakeVotes.length){
-          clearInterval(interval);
-          setTimeout(showPieChart, 900, urbYes+subYes, urbNo+subNo, subYes, subNo);
-          return;
-        }
-        let v=fakeVotes[animIdx];
-        if(v.type==="Urban") v.vote==0 ? urbYes++ : urbNo++
-        else v.vote==0 ? subYes++ : subNo++;
-        animIdx++;
-        let percent = (animIdx/fakeVotes.length)*100;
-        document.getElementById("voteBar").style.width = percent+"%";
-      }, Math.max(44,220-fakeVotes.length));
+  // --- Voting
+  const votingQuestions = [
+    {
+      q: "Should more parks be built in the city?",
+      options: ["Yes", "No"]
+    },
+    {
+      q: "Support significant investment in public transport?",
+      options: ["Yes", "No"]
+    },
+    {
+      q: "Should the suburbs get a new shopping center?",
+      options: ["Yes", "No"]
     }
+  ];
+  let votingRound=0, fakeVotes=[];
+  function startVoting(){
+    document.getElementById("voteScreen").classList.remove("hidden");
+    showVotingQuestion();
+  }
+  function showVotingQuestion(){
+    let q=votingQuestions[votingRound];
+    document.getElementById("question").innerHTML=`<span class='vote-question'>${q.q}</span>`;
+    let optHtml='';
+    for(let i=0;i<q.options.length;i++)
+      optHtml+=`<button class="vote-btn" onclick="castVote(${i})">${q.options[i]}</button>`;
+    document.getElementById("voteOptions").innerHTML=optHtml;
+    document.getElementById("voteBar").style.width="0";
+    document.getElementById("votePieWrap").classList.add("hidden");
+  }
 
-    // --- PIE Chart + Reveal Suburbans entscheiden!
-    function showPieChart(urbanYes, urbanNo, suburbYes, suburbNo){
-      document.getElementById("votePieWrap").classList.remove("hidden");
-      let pie = document.getElementById("votePie");
-      let ctx2 = pie.getContext("2d");
+  // Simulate voting, making Suburban votes deciding!
+  window.castVote=function(opt){
+    document.getElementById("voteOptions").innerHTML="<div style='font-size:1.17rem;color:#ccd'>Thank you for voting!</div>";
+    let maxVotes=52+Math.floor(Math.random()*12);
+    let rollName=roles[assignedRole].name;
+    fakeVotes=[];
+    // Simulate more Suburban than Urban
+    for(let i=0;i<maxVotes;i++){
+      if(Math.random()<0.57)
+        fakeVotes.push({type:"Suburban",vote:(Math.random()<0.52?0:1)});
+      else
+        fakeVotes.push({type:"Urban",vote:(Math.random()<0.76?0:1)});
+    }
+    fakeVotes.push({type:rollName.includes("Urban")?"Urban":"Suburban",vote:opt});
+    let animIdx=0,urbYes=0,urbNo=0,subYes=0,subNo=0;
+    let interval = setInterval(()=>{
+      if(animIdx>=fakeVotes.length){
+        clearInterval(interval);
+        setTimeout(showPieChart,900,urbYes,urbNo,subYes,subNo);
+        return;
+      }
+      let v=fakeVotes[animIdx++];
+      if(v.type==="Urban") v.vote==0?urbYes++:urbNo++; else v.vote==0?subYes++:subNo++;
+      let percent = (animIdx/fakeVotes.length)*100;
+      document.getElementById("voteBar").style.width = percent+"%";
+    }, Math.max(38,190-fakeVotes.length));
+  }
+
+  // --- Pie chart w/ explanation
+  function showPieChart(urbanYes,urbanNo,suburbYes,suburbNo){
+    document.getElementById("votePieWrap").classList.remove("hidden");
+    let pie=document.getElementById("votePie");
+    let ctx2=pie.getContext("2d");
+    ctx2.clearRect(0,0,pie.width,pie.height);
+    let all=urbanYes+urbanNo+suburbYes+suburbNo;
+    let yes=urbanYes+suburbYes, no=urbanNo+suburbNo;
+    // Pie animation
+    let ayes=0,ano=0,step=0;
+    function ani(){
+      step+=0.07;
+      ayes = step*(yes/all)*2*Math.PI;
+      ano = step*(no/all)*2*Math.PI;
       ctx2.clearRect(0,0,pie.width,pie.height);
-      let urbanTotal = urbanYes+urbanNo;
-      let suburbTotal = suburbYes+suburbNo;
-      let all = urbanTotal + suburbTotal;
-      let uv = urbanYes+suburbYes, nv = urbanNo+suburbNo;
-
-      // Piechart-Animationen
-      let angleYes=0, angleNo=0, step=0;
-      function ani(){
-        // In Schritten von 0->Ende den Chart aufbauen:
-        step+=0.06;
-        angleYes = step * (uv/all)*2*Math.PI;
-        angleNo  = step * (nv/all)*2*Math.PI;
-        ctx2.clearRect(0,0,pie.width,pie.height);
-        // Yes // Urban = Blau, Suburb = Grün
-        let start=0;
-        ctx2.beginPath();
-        ctx2.moveTo(145,110);
-        ctx2.arc(145,110,90,start,start+angleYes); ctx2.lineTo(145,110); ctx2.closePath();
-        ctx2.fillStyle="#3367d6"; ctx2.globalAlpha=0.74; ctx2.fill();
-        // Nein
-        ctx2.beginPath();
-        ctx2.moveTo(145,110);
-        ctx2.arc(145,110,90,start+angleYes,start+angleYes+angleNo);
-        ctx2.lineTo(145,110); ctx2.closePath();
-        ctx2.fillStyle="#43a047"; ctx2.globalAlpha=0.74; ctx2.fill();
-        ctx2.globalAlpha=1.0;
-        // Animation zuende?
-        if(step<1.0) requestAnimationFrame(ani);
-      }
-      ani();
-
-      // Textlabel
-      let decision = suburbYes>suburbNo ? "Suburbans entscheiden: JA!" : "Suburbans entscheiden: NEIN!";
-      let s = `<b>Urban:</b> ${urbanYes} / ${urbanNo} &nbsp; | &nbsp;<b>Suburban:</b> ${suburbYes} / ${suburbNo}<br><span style="color:var(--accent);font-size:1.1em">${decision}</span>`;
-      document.getElementById("pieLabel").innerHTML = s;
-
-      setTimeout(function(){
-        votingRound++;
-        fakeVotes = [];
-        if(votingRound < votingQuestions.length){
-          setTimeout(showVotingQuestion, 2000);
-        }else{
-          // ENDE
-          document.getElementById("voteScreen").innerHTML = "<h2>Danke fürs Mitmachen!<br>Die Suburbs entscheiden die Wahl! 😄</h2><div style='margin-top:23px'>Erstelle neue Runden, indem du die Seite aktualisierst.</div>";
-        }
-      }, 3500);
+      // YES - Urban+Suburban (color interpolated)
+      ctx2.beginPath(); ctx2.moveTo(165,110);
+      ctx2.arc(165,110,90,0,ayes); ctx2.closePath();
+      let grad=ctx2.createLinearGradient(165,10,165,210);
+      grad.addColorStop(0,"#70c1ff"); grad.addColorStop(1,"#29e2a0");
+      ctx2.globalAlpha=0.78; ctx2.fillStyle=grad; ctx2.fill(); ctx2.globalAlpha=1;
+      // NO
+      ctx2.beginPath(); ctx2.moveTo(165,110);
+      ctx2.arc(165,110,90,ayes,ayes+ano); ctx2.closePath();
+      ctx2.globalAlpha=0.82; ctx2.fillStyle="#223e61"; ctx2.fill(); ctx2.globalAlpha=1;
+      // Pie shine
+      ctx2.beginPath(); ctx2.arc(165,110,65,0,2*Math.PI); ctx2.globalAlpha=0.12; ctx2.fillStyle="#fff"; ctx2.fill(); ctx2.globalAlpha=1;
+      // Done?
+      if(step<1.03)requestAnimationFrame(ani);
     }
-  </script>
+    ani();
+
+    // Winner explained
+    let winner = suburbYes>suburbNo
+      ? `<b style="color:#19e79a">Suburban</b> voters tip the scale: <b>YES!</b>`
+      : `<b style="color:#4D90FA">Suburban</b> voters tip the scale: <b>NO!</b>`;
+    let s = `<b>Urban</b>: ${urbanYes} / ${urbanNo} &nbsp;|&nbsp; <b>Suburban</b>: ${suburbYes} / ${suburbNo}`;
+    document.getElementById("pieLabel").innerHTML = s;
+    document.getElementById("pieExpl").innerHTML = winner;
+
+    setTimeout(function(){
+      votingRound++;
+      fakeVotes=[];
+      if(votingRound<votingQuestions.length){
+        setTimeout(showVotingQuestion,1800);
+      }else{
+        // END
+        document.getElementById("voteScreen").innerHTML = `
+          <h2>Thank you for playing!</h2>
+          <div class="desc" style="color:#bff;">Remember: Suburban voters decide the outcome.<br>
+          <span style="font-size:1.32em;color:#f8ff90">🎉 Civic Night = Democracy Fun!</span><br>
+          <br><span style="font-size:1em;color:#ffd;">
+          Refresh the page to play again.</span></div>
+        `;
+      }
+    },3800);
+  }
+</script>
 </body>
 </html>
