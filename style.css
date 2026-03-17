@@ -1,0 +1,86 @@
+body {
+  font-family: system-ui, sans-serif;
+  background: #f4f8fa;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 480px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+  padding: 24px 24px 32px 24px;
+}
+
+h1 {
+  font-size: 2em;
+  margin-bottom: 0.5em;
+}
+
+#quiz-box, #result-box {
+  margin-top: 2em;
+}
+
+#question {
+  font-size: 1.15em;
+  font-weight: bold;
+  margin-bottom: 1em;
+}
+
+form label {
+  display: block;
+  background: #e0eafc;
+  border-radius: 4px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+form label.selected {
+  background: #1e80e7;
+  color: #fff;
+}
+
+input[type=radio] {
+  margin-right: 8px;
+}
+
+#next-btn, #start-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  background: #1e80e7;
+  color: #fff;
+  font-size: 1em;
+  cursor: pointer;
+  margin-top: 16px;
+  transition: background 0.2s;
+}
+
+#next-btn:disabled {
+  background: #8ebaea;
+  cursor: not-allowed;
+}
+
+.hidden {
+  display: none;
+}
+
+#feedback {
+  margin: 16px 0 6px 0;
+  font-weight: bold;
+}
+
+#score {
+  font-size: 1.2em;
+  margin-bottom: 0.7em;
+}
+
+#explanations {
+  padding-left: 1em;
+  color: #444;
+  font-size: 0.98em;
+}
